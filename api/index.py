@@ -6,14 +6,15 @@ app = Flask(__name__)
 # Mock data for bolt tightness
 def generate_mock_data():
     return [
-        {"bolt_id": f"Bolt-{i+1}", "tightness": random.randint(70, 130), 
-         "status": "Optimal" if 90 <= random.randint(70, 130) <= 110 else "Critical"}
+        {"bolt_id": f"Bolt-{i+1}", "tightness": (tightness := random.randint(70, 130)), 
+         "status": "Optimal" if 90 <= tightness <= 110 else "Critical"}
         for i in range(10)
     ]
 
 @app.route('/api/bolts', methods=['GET'])
 def get_bolts():
     data = generate_mock_data()
+    print(data)
     return jsonify(data)
 
 # Serve frontend
