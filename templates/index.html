@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bolt Tightness Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+        th { background-color: #f4f4f4; }
+        canvas { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Bolt Tightness Dashboard</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Bolt ID</th>
+                <th>Tightness (%)</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="bolt-table">
+            <!-- Data will be injected here -->
+        </tbody>
+    </table>
+    <canvas id="tightness-chart" width="400" height="200"></canvas>
+
+    <script>
+        async function fetchBoltData() {
+            const response = await fetch('/api/bolts');
+            const bolts = await response.json();
+
+            // Populate table
+            const tableBody = document.getElementById('bolt-table');
+            tableBody.innerHTML = '';
+            bolts.forEach(bolt => {
+                const row = `
+                    <tr>
+                        <td>${bolt.bolt_id}</td>
+                        <td>${bolt.tightness}%</td>
+                        <td>${bolt.status}</td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+            });
+
+            // Populate chart
+            const labels = bolts.map(bolt => bolt.bolt_id);
+            const data = bolts.map(bolt => bolt.tightness);
+            const ctx = document.getElementById('tightness-chart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Bolt Tightness (%)',
+                        data: data,
+                        backgroundColor: data.map(t => t >= 90 && t <= 110 ? 'green' : 'red'),
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: { beginAtZero: true, max: 150 }
+                    }
+                }
+            });
+        }
+
+        fetchBoltData();
+    </script>
+</body>
+</html>
