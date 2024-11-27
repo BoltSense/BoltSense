@@ -7,7 +7,7 @@ app = Flask(__name__)
 def generate_mock_data():
     return [
         {"bolt_id": f"Bolt-{i+1}", "tightness": (tightness := random.randint(70, 130)), 
-         "status": "Optimal" if 90 <= tightness <= 110 else "Critical"}
+         "status": "Optimal" if 95 <= tightness <= 105 else "Critical"}
         for i in range(10)
     ]
 
